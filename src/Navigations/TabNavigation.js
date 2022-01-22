@@ -1,11 +1,14 @@
 import React from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native'
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { MainStackNavigator, CheckoutNavigator, ProfileNavigator} from "./stackNavigator";
+import { MainStackNavigator, CartNavigator, ProfileNavigator} from "./stackNavigator";
+import { useSelector } from 'react-redux';
 
 const Tab = createBottomTabNavigator();
 
 export function TabNavigator () {
+     const quantity = useSelector(state => state.cart.quantity)
+
     return (
         <Tab.Navigator 
         tabBarOptions = {{
@@ -91,7 +94,7 @@ export function TabNavigator () {
         })}
         >
             <Tab.Screen name="Home" component={MainStackNavigator}  />
-            <Tab.Screen name="Cart" component={CheckoutNavigator} options={{ tabBarBadge: 3 }}/>
+            <Tab.Screen name="Cart" component={CartNavigator} options={{ tabBarBadge: quantity }}/>
             <Tab.Screen name="Profile" component={ProfileNavigator} />
         </Tab.Navigator>
     );

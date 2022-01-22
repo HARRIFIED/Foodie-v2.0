@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, 
     Text, 
-    Button, 
     StatusBar, 
     ScrollView, 
     Image, StyleSheet, 
@@ -9,13 +8,14 @@ import { View,
 } from 'react-native';
 import TodaySpecial from '../components/TodaySpecial';
 import FoodStories from '../components/FoodStories';
+
 // import { useNavigation } from '@react-navigation/native';
 
 
 const Home = ({ navigation }) => {
   
 //    const navigation = useNavigation();
-
+   
     return (
         <ScrollView style={{
             backgroundColor: '#191414'

@@ -1,8 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, ScrollView, StatusBar, TouchableOpacity, StyleSheet,Modal } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
+import { addProducts } from '../redux/reduxslices/cartSlice';
+import Loader5 from '../components/Loader5';
+
+
 
 const ProductDetails = ({route, navigation}) => {
+    const product = useSelector(state => state.cart.product)
+    const quantity  = useSelector(state => state.cart.quantity)
+    
+    const [cartQuantity, setcartQuantity] = useState(1);
+    const [isLoading, setLoading] = useState(false);
+    const [disabled, setDisabled] = useState(false);
+    const dispatch = useDispatch();
 
+  const handleQuantity = (type) => {
+    if (type === "dec") {
+      cartQuantity > 1 && setcartQuantity(cartQuantity - 1);
+    } else {
+      setcartQuantity(cartQuantity + 1);
+    }
+  };
+    
     const {
         title,
         desc,
@@ -12,8 +32,21 @@ const ProductDetails = ({route, navigation}) => {
         size,
         inStock,
   } = route.params;
+
+    const handleAddProducts = async () => {
+      try{
+        await dispatch(addProducts({ product, quantity, cartQuantity }));
+        disabled = false
+      } catch (err) {
+          
+      } finally{
+          setDisabled(true)
+      }
+    }
+
     return (
         <Modal>
+        {isLoading ? <Loader5/> : 
             <ScrollView
                 style={{
                     width: '100%',
@@ -78,7 +111,7 @@ const ProductDetails = ({route, navigation}) => {
                     <Text style={{
                         color: 'white',
 
-                    }}>3</Text>
+                    }}>{quantity}</Text>
                 </View>
                 </TouchableOpacity>
             </View>
@@ -169,7 +202,7 @@ const ProductDetails = ({route, navigation}) => {
                             fontWeight: '900',
                             alignItems: 'center',
                         }}>
-                        {price}
+                        {(price * cartQuantity).toFixed(1)}
                         </Text>
                     </View>
                     <View style={{
@@ -177,12 +210,22 @@ const ProductDetails = ({route, navigation}) => {
                         marginRight: 10,
                         alignItems: 'center'
                     }}>
-                        <TouchableOpacity>
-                            <Image source={require('../assets/icons/add.png')} style={styles.icon} />
-                        </TouchableOpacity>
-                        <Text style={{color: 'white', fontWeight: '800', fontSize: 18, textAlign: 'center'}}>3</Text>
-                        <TouchableOpacity>
+                        
+                        <TouchableOpacity onPress={() => handleQuantity("dec")}>
                             <Image source={require('../assets/icons/remove.png')} style={styles.icon} />
+                        </TouchableOpacity>
+                        <Text style={{
+                            color: 'white', 
+                            fontWeight: '800',
+                             fontSize: 18, 
+                             textAlign: 'center',
+                             marginLeft: 5,
+                             marginRight: 5,
+                            }}>
+                            {cartQuantity}
+                        </Text>
+                        <TouchableOpacity onPress={() => handleQuantity("inc")}>
+                            <Image source={require('../assets/icons/add.png')} style={styles.icon} />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -223,28 +266,34 @@ const ProductDetails = ({route, navigation}) => {
                             marginTop: 25
                         }}/>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        backgroundColor: '#383d39',
-                        justifyContent: 'center',
-                        marginRight: 10,
-                        marginTop: 25,
-                        height: 40,
-                        width: 140,
-                        borderTopLeftRadius: 10,
-                        borderTopRightRadius: 10,
-                        borderBottomLeftRadius: 10,
-                        borderBottomRightRadius: 10,
+                    <TouchableOpacity 
+                        onPress={() => handleAddProducts()}
+                        disabled = {disabled}
+                        style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            backgroundColor: '#383d39',
+                            justifyContent: 'center',
+                            marginRight: 10,
+                            marginTop: 25,
+                            height: 40,
+                            width: 140,
+                            borderTopLeftRadius: 10,
+                            borderTopRightRadius: 10,
+                            borderBottomLeftRadius: 10,
+                            borderBottomRightRadius: 10,
                     }}>
-                        <Text style={{color: 'white', fontSize: 18}}>Add to Cart</Text>
+                        <Text style={{color: 'white', fontSize: 18}}>
+                            Add to Cart
+                        </Text>
                         <Image source={require('../assets/icons/cart.png')} style={{
                             tintColor: "#dbe892",
                             width: 29
                         }} />
                     </TouchableOpacity>
             </View>
-        </ScrollView>
+         </ScrollView>
+        }
     </Modal>
     
     );
@@ -252,8 +301,8 @@ const ProductDetails = ({route, navigation}) => {
 const styles = StyleSheet.create({
     icon: {
         tintColor: "#dbe892",
-        width: 40,
-        height: 25,
+        width: 45,
+        height: 30,
         resizeMode: "contain",
     }
 })

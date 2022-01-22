@@ -3,7 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Home from '../screens/Home';
 import ProductDetails from '../screens/ProductDetails';
 import Notifications from '../screens/Notifications';
-import CheckOut from '../screens/CheckOut';
+import Cart from '../screens/Cart';
 import Profile from '../screens/Profile';
 import Orders from '../screens/Orders';
 
@@ -25,14 +25,14 @@ export function MainStackNavigator () {
     );
 };
 
-export function CheckoutNavigator () {
+export function CartNavigator () {
     return (
         <Stack.Navigator 
             screenOptions={{
                 headerShown: false,
             }}
         >
-            <Stack.Screen name='cart' component={CheckOut} />
+            <Stack.Screen name='cart' component={Cart} />
         </Stack.Navigator>
     );
 }
