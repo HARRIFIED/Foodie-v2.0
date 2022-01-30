@@ -2,38 +2,31 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, Text, View, TouchableOpacity, Image } from 'react-native';
 import Loader5 from './Loader5';
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { getProducts } from '../redux/reduxslices/productsSlice';
 
 const TodaySpecial = () => {
 
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const products = useSelector(state => state.products)
+  // console.log(products.item);
   const [isLoading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
-
-  const fetchSpecial = async () => {
-     try {
-      const response = await fetch('http://192.168.43.188:5000/api/products?category=special');
-      const json = await response.json();
-      setData(json);
-    } catch (error) {
-      alert(error);
-    } finally {
-      setLoading(false);
-    }
-  }
+  
 
   useEffect(() => {
-    fetchSpecial();
-  }, []);
-  
+    dispatch(getProducts());
+    setLoading(false);
+  }, [dispatch])
+//  console.log(products)
 
   return (
     <View style={{  }}>
       {isLoading ? <Loader5 style={{margin: 20}}/> : (
         <FlatList
-         
           showsHorizontalScrollIndicator={false}
           horizontal={true}
-          data={data}
+          data={products.item}
           keyExtractor={( item, index) => item._id}
           renderItem={({ item }) => (
         <TouchableOpacity style={{
@@ -42,15 +35,7 @@ const TodaySpecial = () => {
             marginTop: 2
         }}
         activeOpacity={0.9}
-        onPress={() => navigation.navigate("Details", {
-          title: item.title,
-          desc: item.desc,
-          img: item.img,
-          price: item.price,
-          size: item.size,
-          categories: item.categories,
-          inStock: item.inStock
-        })}
+        onPress={() => navigation.push("Details", {item})}
         >
          
         <View

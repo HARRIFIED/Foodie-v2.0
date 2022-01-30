@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, ScrollView, StatusBar, TouchableOpacity, StyleSheet,Modal } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { addProducts } from '../redux/reduxslices/cartSlice';
@@ -7,13 +7,18 @@ import Loader5 from '../components/Loader5';
 
 
 const ProductDetails = ({route, navigation}) => {
-    const product = useSelector(state => state.cart.product)
+    const product = useSelector(state => state.cart.products)
     const quantity  = useSelector(state => state.cart.quantity)
-    
     const [cartQuantity, setcartQuantity] = useState(1);
     const [isLoading, setLoading] = useState(false);
     const [disabled, setDisabled] = useState(false);
+    const [_prod, setProd] = useState({});
     const dispatch = useDispatch();
+
+    useEffect(()=> {
+        const {item} = route.params;
+        setProd(item);
+    },[]);
 
   const handleQuantity = (type) => {
     if (type === "dec") {
@@ -31,18 +36,26 @@ const ProductDetails = ({route, navigation}) => {
         img,
         size,
         inStock,
-  } = route.params;
+  } = route.params.item;
 
     const handleAddProducts = async () => {
       try{
-        await dispatch(addProducts({ product, quantity, cartQuantity }));
+        // console.log(product, quantity, cartQuantity, price)
+        await dispatch(addProducts({ 
+            product: _prod, 
+            quantity, 
+            cartQuantity, 
+            TotalPrice: (price * cartQuantity).toFixed(1)
+        }));
         disabled = false
+        navigation.push("Cart", {item})
       } catch (err) {
           
       } finally{
           setDisabled(true)
       }
     }
+    
 
     return (
         <Modal>

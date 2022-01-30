@@ -1,10 +1,12 @@
-import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Image, FlatList, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux'
 
 
-const Cart = ({ navigation }) => {
-    const cartProduct = useSelector(state => state.cart.product)
+const Cart = ({ route,navigation }) => {
+    const [_prod, setProd] = useState({});
+    const totalCartProduct = useSelector(state => state.cart.products)
+
     return (
        <ScrollView style={{
            backgroundColor: '#191414'
@@ -48,53 +50,134 @@ const Cart = ({ navigation }) => {
                 >Cart
                 </Text>  
            </View>
-            <View style={{
-                width: 550,
-                height: 400,
-                paddingRight: 170,
-                paddingLeft: 20,
-            }}>
-                <Image source={require('../assets/images/empty_cart_ccexpress.png')} style={{
-                    width: "90%",
-                    height: "80%",
-                }} />
-            </View>
-            <View style={{
-                flexDirection: 'row',
-                justifyContent: "center",
-                alignItems: "center",
-                marginBottom: 20
-            }}>
-                <Text style={{
-                    color: 'white',
-                    fontSize: 18,
-                    textAlign: "center",
-                }}>Empty Cart</Text>
-                <TouchableOpacity onPress={() => navigation.navigate('Home')}
-                    style={{
-                        flexDirection: 'row',
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginLeft: 20,
-                        height: 40,
-                        width: 140,
-                        borderTopLeftRadius: 10,
-                        borderTopRightRadius: 10,
-                        borderBottomLeftRadius: 10,
-                        borderBottomRightRadius: 10,
-                        backgroundColor: '#383d39',
+            <FlatList  
+                data={totalCartProduct}
+                keyExtractor={( item, index) => item._id}
+                renderItem={({ item }) => (
+                <TouchableOpacity style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginTop: 2
+                }}
+                activeOpacity={0.9}
+           >
+         
+                <View
+                style={{
+                    width: 140,
+                    height: 140,
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#211f1f',
+                    borderRadius: 70,
+                    margin: 10,
+                    elevation: 5,
+                    zIndex: 3,
+                    elevation: 10,
                 }}>
-                    <Text style={{color: 'white', fontSize: 18}}>
-                            Add to Cart
-                        </Text>
-                        <Image source={require('../assets/icons/cart.png')} style={{
-                            tintColor: "#dbe892",
-                            width: 29
-                        }} />
-                </TouchableOpacity>
-            </View>
+                <Image source={{uri: item.img}} style={{
+                    width: '100%',
+                    height: '100%',
+                    resizeMode: 'contain',
+                }}/>
+                </View>
+                <View style={{
+                backgroundColor: '#383d39',
+                elevation: 5,
+                height: 100,
+                width: 280,
+                opacity: 0.8,
+                marginLeft: -105,
+                zIndex: 1,
+                borderTopLeftRadius: 40,
+                borderBottomLeftRadius: 40,
+                borderTopRightRadius: 20,
+                borderBottomRightRadius: 20
+                }}>
+                <View style={{
+                    marginTop: 3,
+                    marginLeft: 100,
+                    marginBottom: 2
+                }}>
+                    <Text style={{
+                    fontSize: 18,
+                    fontWeight: '700',
+                    fontStyle: 'italic',
+                    color: 'white',
+                    marginBottom: 2
+                    
+                    }}>{item.title}</Text>
+                    
+                </View>
+                <View style={{
+                    marginLeft: 100,
+                    borderBottomEndRadius: 20,
+                }}>
+                    <Text style={{
+                    color: 'white', 
+                    fontSize: 20, 
+                    fontWeight: 'bold',
+                    marginBottom: 2,
+                    marginLeft: 30
+                    }}
+                    >${item.price}</Text>
+                    <View style={{
+                    
+                    }}>
+                        <View style={{
+                            flexDirection: 'row',
+                            marginRight: 10,
+                            alignItems: 'center'
+                        }}>
+                            <TouchableOpacity >
+                                <Image source={require('../assets/icons/remove.png')} style={styles.icon} />
+                            </TouchableOpacity>
+                            <Text style={{
+                                color: 'white', 
+                                fontWeight: '800',
+                                fontSize: 18, 
+                                textAlign: 'center',
+                                marginLeft: 5,
+                                marginRight: 5,
+                                }}>
+                                3
+                            </Text>
+                            <TouchableOpacity >
+                                <Image source={require('../assets/icons/add.png')} style={styles.icon} />
+                            </TouchableOpacity>
+                        </View>
+                        
+                    </View>
+                </View>
+                </View>
+                <View style={{
+                    marginLeft: -60,
+                    zIndex: 3,
+                }}>
+                <Image source={require('../assets/icons/delete.png')} style={{
+                        tintColor: "#dbe892",
+                        width: 45,
+                        height: 30,
+                        resizeMode: "contain",
+                        
+                }}/>
+                </View>
+            </TouchableOpacity>          )}
+                />
+                    
        </ScrollView>
     );
 }
+
+const styles = StyleSheet.create({
+    icon: {
+        tintColor: "#dbe892",
+        width: 45,
+        height: 30,
+        resizeMode: "contain",
+    }
+})
+
 
 export default Cart;

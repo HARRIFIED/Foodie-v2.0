@@ -1,28 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, Text, View, TouchableOpacity, Image } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { getStoriesProducts } from '../redux/reduxslices/storiesProductsSlice'
 import Loader5 from './Loader5';
 
 
 const FoodStories = () => {
   const [isLoading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
-
-  const fetchSpecial = async () => {
-     try {
-        const response = await fetch('http://192.168.43.188:5000/api/products?category=stories');
-        const json = await response.json();
-        setData(json);
-    } catch (error) {
-        alert(error);
-    } finally {
-        setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    fetchSpecial();
-  }, []);
-  
+  const dispatch = useDispatch();
+  const storiesProducts = useSelector(state => state.storiesProducts)
+  useEffect(()=> {
+    dispatch(getStoriesProducts())
+    setLoading(false)
+  }, [dispatch])
 
   return (
     <View style={{  }}>
@@ -30,7 +20,7 @@ const FoodStories = () => {
         <FlatList
           showsHorizontalScrollIndicator={false}
           horizontal={true}
-          data={data}
+          data={storiesProducts.items}
           keyExtractor={( item, index) => item._id}
           renderItem={({ item }) => (
           <TouchableOpacity style={{
